@@ -5,8 +5,10 @@ import styles from "./index.module.css";
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState();
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(event) {
+    setLoading(true);
     event.preventDefault();
     try {
       const response = await fetch("/api/generate", {
@@ -19,13 +21,16 @@ export default function Home() {
 
       const data = await response.json();
       if (response.status !== 200) {
-        throw data.error || new Error(`Request failed with status ${response.status}`);
+        throw (
+          data.error ||
+          new Error(`Request failed with status ${response.status}`)
+        );
       }
-
+      setLoading(false);
       setResult(data.result);
       setAnimalInput("");
-    } catch(error) {
-      // Consider implementing your own error handling logic here
+    } catch (error) {
+      setLoading(false);
       console.error(error);
       alert(error.message);
     }
@@ -34,23 +39,36 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>OpenAI Quickstart</title>
-        <link rel="icon" href="/dog.png" />
+        <title>The Krishna way</title>
+        <link rel="icon" href="/index.jpeg" />
       </Head>
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
+        <img src="/index.jpeg" className={styles.icon} />
+        <h3>The Krishna way</h3>
         <form onSubmit={onSubmit}>
           <input
             type="text"
             name="animal"
-            placeholder="Enter an animal"
+            placeholder="Samashya batao"
             value={animalInput}
             onChange={(e) => setAnimalInput(e.target.value)}
           />
-          <input type="submit" value="Generate names" />
+          <input type="submit" value="Samadhan padho" />
         </form>
+
+        {loading ? (
+          <>
+            <img
+              src="/blinking.gif"
+              style={{ paddingTop: "20px" }}
+              className={styles.icon}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+
         <div className={styles.result}>{result}</div>
       </main>
     </div>
